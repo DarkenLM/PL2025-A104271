@@ -1,0 +1,2 @@
+abc 10 xyz Off 20 foo On 30 bar 40 =
+80
