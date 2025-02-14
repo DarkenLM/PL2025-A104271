@@ -2,6 +2,10 @@
 
 **Titulo:** Somador on/off  
 **Autor:** Rafael Santos Fernandes  
+**Data:**  2025-02-11  
+**Autor:** Rafael Santos Fernandes  
+**Número:** A104271  
+<img src="../assets/img/foto.jpg" alt="foto" width="200" />
 
 ## Resumo
 ### Enunciado
