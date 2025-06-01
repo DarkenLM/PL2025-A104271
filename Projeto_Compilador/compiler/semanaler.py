@@ -352,7 +352,7 @@ def s_procedureOrFunctionCommon(n: ast.ProcedureDeclarationNode | ast.FunctionDe
     nscope.addSymbol(parentSym)
     nscope._procedure = n.heading.name
 
-    print("LE FUCKING NSCOPE:", nscope)
+    # print("LE FUCKING NSCOPE:", nscope)
 
     retType = None
     if (n.ist(ast.FunctionDeclarationNode)):
@@ -392,7 +392,7 @@ def s_block(n: ast.BlockNode):
     if (n.variables != None): assert s_blockVariables(n.variables)
     if (n.subfuncs != None): assert s_blockSubFuncs(n.subfuncs)
 
-    print("FUCKING BLOCK SCOPES:", SA_STATE["scopes"])
+    # print("FUCKING BLOCK SCOPES:", SA_STATE["scopes"])
     # assert s_assignmentStatement(n.stmt.value[2])
     assert s_compoundStatement(n.stmt)
 
@@ -404,9 +404,9 @@ def s_block(n: ast.BlockNode):
 def evaluateVariableType(n: ast.VariableNode):
     scope = SymbolTable.getCurrentScope()
 
-    print("FUCKING VARIABLE:", n)
+    # print("FUCKING VARIABLE:", n)
     if (n.ist(ast.EntireVariableNode)):
-        print("FUCKING ENTIRE VARIABLE TYPE:", scope.resolvePossibleReference(n.value).value.value)
+        # print("FUCKING ENTIRE VARIABLE TYPE:", scope.resolvePossibleReference(n.value).value.value)
         return scope.resolvePossibleReference(n.value).value.value
     elif (n.ist(ast.IndexedVariableNode)):
         pass # TODO If I have the fucking time
@@ -415,7 +415,7 @@ def evaluateVariableType(n: ast.VariableNode):
 def evaluateExpressionType(n: ast.ExpressionLikeNode):
     scope = SymbolTable.getCurrentScope()
 
-    print("FUCKING EXPRESSION TYPE:", n)
+    # print("FUCKING EXPRESSION TYPE:", n)
     if (n.ist(ast.ExpressionNode)):
         if (n.lhs != None): return evaluateExpressionType(n.lhs)
         else: return evaluateExpressionType(n.rhs)
@@ -452,15 +452,15 @@ def s_expression(n: ast.ExpressionLikeNode):
         #     raise SemanticError(n, DiagnosticType.UNDECLARED_ACTIVATABLE, { "value": n.key.value })
 
         # actSym = scope.getSymbolByNameAndKind(n.key.value, SymbolKind.SYM_ACTIVATABLE)
-        # print("FUCKING FUNCTION:", actSym.value.params)
-        # print("FUCKING FUNCTION ACTIVATION:", n.params)
+        # # print("FUCKING FUNCTION:", actSym.value.params)
+        # # print("FUCKING FUNCTION ACTIVATION:", n.params)
 
         # for i, param in enumerate(n.params.value):
-        #     print("EVALUATING THE FUCKING EXPRESSION PARAM:", param)
+        #     # print("EVALUATING THE FUCKING EXPRESSION PARAM:", param)
         #     exprParamType = evaluateExpressionType(param)
-        #     print("FUCKING EXPRESSION PARAM TYPE:", exprParamType)
+        #     # print("FUCKING EXPRESSION PARAM TYPE:", exprParamType)
 
-        #     print("FUCKING FUCK:", actSym.value.params[i].value.value, exprParamType)
+        #     # print("FUCKING FUCK:", actSym.value.params[i].value.value, exprParamType)
         #     if (not actSym.value.params[i].value.value.typeEquals(exprParamType.value)):
         #         raise SemanticError(
         #             n, DiagnosticType.TYPE_MISMATCH, 
@@ -479,16 +479,16 @@ def s_activation(n: ast.FunctionDesignatorNode):
         raise SemanticError(n, DiagnosticType.UNDECLARED_ACTIVATABLE, { "value": n.key.value })
 
     actSym = scope.getSymbolByNameAndKind(n.key.value, SymbolKind.SYM_ACTIVATABLE)
-    print("FUCKING FUNCTION:", actSym.value.params)
-    print("FUCKING FUNCTION ACTIVATION:", n)
+    # print("FUCKING FUNCTION:", actSym.value.params)
+    # print("FUCKING FUNCTION ACTIVATION:", n)
 
     for i, param in enumerate(n.params.value):
-        # print("EVALUATING THE FUCKING EXPRESSION PARAM:", param)
+        # # print("EVALUATING THE FUCKING EXPRESSION PARAM:", param)
         exprParamType = evaluateExpressionType(param)
-        print("FUCKING EXPRESSION PARAM TYPE:", exprParamType)
+        # print("FUCKING EXPRESSION PARAM TYPE:", exprParamType)
 
         if (len(actSym.value.params) > 0):
-            print("FUCKING FUCK:", actSym.value.params[i].value, exprParamType, scope.resolvePossibleSymbolReference(exprParamType))
+            # print("FUCKING FUCK:", actSym.value.params[i].value, exprParamType, scope.resolvePossibleSymbolReference(exprParamType))
             if (not actSym.value.params[i].value.typeEquals(exprParamType)):
                 raise SemanticError(
                     n, DiagnosticType.TYPE_MISMATCH, 
@@ -605,13 +605,13 @@ def analyzeSemantics(n: ast.ProgramNode):
         assert s_programHeading(n.heading)
         assert s_block(n.body)
 
-        # print(SA_STATE["scopes"])
-        # print(SA_STATE["scopes"][1].__repr__(0, True))
-        print(*list(map(lambda s : s.__repr__(0, True), SA_STATE["scopes"])))
+        # # print(SA_STATE["scopes"])
+        # # print(SA_STATE["scopes"][1].__repr__(0, True))
+        # print(*list(map(lambda s : s.__repr__(0, True), SA_STATE["scopes"])))
 
-        # print(SA_STATE["scopes"][0].syms[0].value.op_add(ast.NumberNode("123.4", ast.NumberKind.UNSIGNED_REAL), ast.NumberNode("456.6", ast.NumberKind.UNSIGNED_REAL)))
-        # print(SA_STATE["scopes"][0].syms[3].value.op_sub(ast.IdentifierNode("a"), ast.IdentifierNode("A")))
-        # print(SA_STATE["scopes"][0].syms[3].value.chr(ast.NumberNode(65, ast.NumberKind.UNSIGNED_INTEGER)))
+        # # print(SA_STATE["scopes"][0].syms[0].value.op_add(ast.NumberNode("123.4", ast.NumberKind.UNSIGNED_REAL), ast.NumberNode("456.6", ast.NumberKind.UNSIGNED_REAL)))
+        # # print(SA_STATE["scopes"][0].syms[3].value.op_sub(ast.IdentifierNode("a"), ast.IdentifierNode("A")))
+        # # print(SA_STATE["scopes"][0].syms[3].value.chr(ast.NumberNode(65, ast.NumberKind.UNSIGNED_INTEGER)))
 
         return True
     except Exception:

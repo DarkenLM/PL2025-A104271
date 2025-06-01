@@ -260,7 +260,7 @@ class CodeTree:
 def variableAccess(bld: CodeTree, n: ast.VariableNode, setMode = False, _apply = True):
     match (n.kind):
         case ast.VariableKind.VARIABLE_ENTIRE:
-            print("MOTHERFUCKING VARIABLE:", n)
+            # print("MOTHERFUCKING VARIABLE:", n)
             # _nv = SA_STATE["scopes"][0].getSymbolByNameAndKind(n.value)
             # nv = _nv if _nv else n.value
 
@@ -280,9 +280,9 @@ def variableAccess(bld: CodeTree, n: ast.VariableNode, setMode = False, _apply =
                 #     hb = emitExpression(bld, n.hbindex)
                 #     bld._mono(CodeID.ADD)
 
-                print("WHAT THE FUCK IS THIS VARIABLE ACCESS:", n.value.value)
-                print("FUCKING INDEXED VARIABLE ACCESS:", base, lb)
-                print("FUCKING INDEXED VARIABLE ACCESS TREE:", bld)
+                # print("WHAT THE FUCK IS THIS VARIABLE ACCESS:", n.value.value)
+                # print("FUCKING INDEXED VARIABLE ACCESS:", base, lb)
+                # print("FUCKING INDEXED VARIABLE ACCESS TREE:", bld)
 
                 if (setMode): bld.setVariableDyn(n.value.value)
                 else: bld.getVariableDyn(n.value.value)
@@ -327,7 +327,7 @@ _OP_MAP_COMMON = {
     ast.OpKind.OP_AND: CodeID.AND,
 }
 def emitExpression(bld: CodeTree, n: ast.ExpressionLikeNode):
-    print("FUCKING EXPRESSION:", bld, n)
+    # print("FUCKING EXPRESSION:", bld, n)
     if (n.ist(ast.ExpressionNode)):
         if (n.lhs != None and n.rhs != None):
             emitExpression(bld, n.lhs)
@@ -343,7 +343,7 @@ def emitExpression(bld: CodeTree, n: ast.ExpressionLikeNode):
             #     op = _OP_MAP_REAL[n.op.value]
             #     bld._mono(op)
 
-            print("WHAT FUCKING OPERATION:", n.staticType, n.op.value)
+            # print("WHAT FUCKING OPERATION:", n.staticType, n.op.value)
             if (n.staticType == ast.ExpressionStaticType.EXP_INTEGER):
                 # op = _OP_MAP_INT[n.op.value]
                 op = _OP_MAP_COMMON.get(n.op.value, _OP_MAP_INT.get(n.op.value))
@@ -405,9 +405,9 @@ def emitStatement(bld: CodeTree, n: ast.StatementNode):
         for stmt in n.value:
             emitStatement(bld, stmt)
     elif (n.ist(ast.ConditionalStatementNode)):
-        print("FUCKING CONDITIONAL:", bld, n)
+        # print("FUCKING CONDITIONAL:", bld, n)
         emitExpression(bld, n.cond)
-        print("FUCKING CONDITIONAL COND RESULT:", bld)
+        # print("FUCKING CONDITIONAL COND RESULT:", bld)
 
         el = getLabelId()
         fl = getLabelId()
@@ -442,8 +442,8 @@ def emitStatement(bld: CodeTree, n: ast.StatementNode):
     elif (n.ist(ast.RepeatStatementNode)):
         pass # TODO: Not enough time
     elif (n.ist(ast.ForStatementNode)):
-        print("MOTHERFUCKING EMIT STATEMENT:", n)
-        print("MOTHERFUCKING TREE:", bld)
+        # print("MOTHERFUCKING EMIT STATEMENT:", n)
+        # print("MOTHERFUCKING TREE:", bld)
 
         emitExpression(bld, n.initial)
         # variableAccess(bld, n.controlVar, True)
@@ -479,7 +479,7 @@ def emitStatement(bld: CodeTree, n: ast.StatementNode):
         # el = getLabelId()
         # bld.jz(el)
         # bld.markLabel(el)
-        print("MOTHERFUCKING TREE 2:", bld)
+        # print("MOTHERFUCKING TREE 2:", bld)
 
 def emitActivatable(obld: CodeTree, n: ProcedureOrFunctionSymbolValue):
     if (n.body == None): return None # Forward declaration
@@ -489,17 +489,17 @@ def emitActivatable(obld: CodeTree, n: ProcedureOrFunctionSymbolValue):
     bld.loadArgs(n.parent.heading.params, len(n.params))
 
     bld.allocVariable(n.parent.heading.name) # Allocate return value
-    # print("EA FUCKING STARTING TREE:", bld)
+    # # print("EA FUCKING STARTING TREE:", bld)
     
     for nvar in n.body.variables.value:
         for key in nvar.keys:
-            # print("EA FUCKING KEY:", key)
+            # # print("EA FUCKING KEY:", key)
             bld.allocVariable(key.value)
 
     emitStatement(bld, n.body.stmt)
 
 def __builtin_write(ln: bool, bld: CodeTree, typeHints):
-    print("MOTHERFUCKING BUILTIN WRITE:", ln, typeHints)
+    # print("MOTHERFUCKING BUILTIN WRITE:", ln, typeHints)
 
     if (typeHints[0].value.ist(ast.UnsignedConstantNode)):
         if (typeHints[0].value.value.ist(ast.NumberNode)):
@@ -531,7 +531,7 @@ def emitBuiltin(bld: CodeTree):
     addActivatable("Atoi", CodeTree.builtin(lambda b, t: __builtin_atoi(b, t)))
 
 
-    print("FUCKING ACTIVATABLES:", _ACTIVATABLE_MAP)
+    # print("FUCKING ACTIVATABLES:", _ACTIVATABLE_MAP)
 
 def emitCode(pout: ast.ProgramNode, outFile):
     bld = CodeTree()
@@ -546,7 +546,7 @@ def emitCode(pout: ast.ProgramNode, outFile):
     if (pout.body.variables):
         for nvar in pout.body.variables.value:
             # dtype = root.getSymbolByNameAndKind()
-            print("LE FUCKEN VARIABLE:", nvar)
+            # print("LE FUCKEN VARIABLE:", nvar)
             for key in nvar.keys:
                 bld.allocVariable(key.value)
 
@@ -557,9 +557,9 @@ def emitCode(pout: ast.ProgramNode, outFile):
     for proc in procedures:
         emitActivatable(bld, proc.value)
 
-    print("FINAL CODE STRUCT:", bld)
+    # print("FINAL CODE STRUCT:", bld)
     code = transformCode(bld)
-    print("FINAL MOTHERFUCKING CODE:\n", code)
+    # print("FINAL MOTHERFUCKING CODE:\n", code)
 
     if (not os.path.exists(os.path.dirname(outFile))): os.mkdir(os.path.dirname(outFile))
     with open(outFile, "w+") as f:
