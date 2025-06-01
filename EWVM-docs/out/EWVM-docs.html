@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>TODO</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="todo">TODO</h1>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> Add preamble.
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> Identify stacks and heaps.</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox" checked=""type="checkbox"> Add glossary</li>
+</ul>
+</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> Consider adding arguments and return value section to every operation, even those that take arguments from the stack.</li>
+</ul>
+<h1 id="ewvm-documentation">EWVM Documentation</h1>
+<ul>
+<li>By: Rafael Santos Fernandes</li>
+<li>Last Modified: 2025-03-24 01:25:50</li>
+</ul>
+<h2 id="preamble">Preamble</h2>
+<p>This document is an alternative documentation to the one present on the <a href="https://ewvm.epl.di.uminho.pt/manual">original EWVM project</a>, created to be more comprehensive and accurate to the virtual machine's behavior. It is not officially endorsed nor maintained by the original authors of the project.</p>
+<h2 id="glossary">Glossary</h2>
+<p>Throughout this document a number of concepts and abbreviatures are used that might not be understandable by the surrounding context alone. Following, a list of some of those concepts is provided:</p>
+<ul>
+<li><code>Global Pointer</code>: The Global Pointer always points to the base of the <code>Operand Stack</code> and cannot be modified. It can be accessed through <em><strong><code>PUSHGP</code></strong></em> and is a useful shorthand for address-wise operations that mutate the global scope of the program. Often abbreviated as <code>GP</code>.</li>
+<li><code>Frame Pointer</code>: The Frame Pointer points to the base of the current scope on the <code>Operand Stack</code>. It changes on procedure calls and returns from said calls. Often abbreviated as <code>FP</code>.</li>
+<li><code>Stack Pointer</code>: The Stack Pointer always points to the top of the stack and is modified by any operation that modifies the <code>Operand Stack</code>. It can be used as a quick pointer for address-wise operations. Often abbreviated as <code>SP</code>.</li>
+<li><code>Program Counter</code>: The Program Counter is a register that keeps track of the current instruction. It can be directly modified through <em><strong><code>JUMP</code></strong></em> operations, but every instruction increments the program counter implicitly (except for procedure-related and jump operations, that can semi-arbitrarily change the program counter). It cannot be directly accessed.</li>
+<li><code>Operand Stack</code>: The Operand Stack is the main stack used by a program. It stores the operands for any operation as well as the scope for every procedure in the program, pushing and popping them from the top. Often abbreviated as <code>stack</code>.</li>
+<li><code>Call Stack</code>: The Call Stack is a parallel stack used by a program to keep track of scope changes through <em><strong><code>CALL</code></strong></em> operations. Every procedure call stores the previous scope's frame pointer and program counter, to be used by a <em><strong><code>RETURN</code></strong></em> call to return from the call and continue the original control flow. Contrary to the <code>Operand Stack</code>, it pushes and pops elements to and from the bottom.</li>
+<li><code>String Heap</code>: The String Heap is a separated heap used exclusively to store string values. It must be accessed through <code>string addresses</code> stored on the <code>Operand Stack</code> beforehand.</li>
+<li><code>Struct Heap</code>: The String Heap is a separated heap used to store blocks of compartmentalized data cells laid out adjacently. It must be accessed through <code>struct addresses</code> stored on the <code>Operand Stack</code> beforehand. Individual cells on a given block can be accessed by offseting relative to the base <code>struct address</code> of that block (<em><strong>SEE: <code>PADD</code></strong></em>).</li>
+<li><code>Address</code>: An Address is a pointer to a given value on the <code>Operand Stack</code>, the heaps or the program code itself. It is used to access larger data blocks by certain operations (such as IO Operations). It is often prefixed by it's associated data structure (<code>string</code> for the <code>String Heap</code>, <code>struct</code> for the <code>Struct Heap</code>), and is visually represented on the editor by an associated prefix. If a prefix is ommited, the operation accepts any address from any source.</li>
+</ul>
+<h2 id="operators">Operators</h2>
+<h3 id="base-operations">Base Operations</h3>
+<p>Base operations are all operations that fall on the category of &quot;basic operations&quot;, such as arithmetic operations (both mathematical and pointer-wise), basic string manipulation, and logic operations.</p>
+<h4 id="integer-operations">Integer Operations</h4>
+<ul>
+<li><code>ADD</code>: Pops the integer values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a + b</code> to the stack.</li>
+<li><code>SUB</code>: Pops the integer values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a - b</code> to the stack.</li>
+<li><code>MUL</code>: Pops the integer values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a * b</code> to the stack.</li>
+<li><code>DIV</code>: Pops the integer values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a / b</code> to the stack.</li>
+<li><code>MOD</code>: Pops the integer st structured block from tvalues <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a % b</code> to the stack.</li>
+<li><code>NOT</code>: Pops the integer value <code>a</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>n = 0</code> to the stack.</li>
+<li><code>INF</code>: Pops the integer values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a &lt; b</code> to the stack as a boolean integer.</li>
+<li><code>INFEQ</code>: Pops the integer values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a &lt;= b</code> to the stack as a boolean integer.</li>
+<li><code>SUP</code>: Pops the integer values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a &gt; b</code> to the stack as a boolean integer.</li>
+<li><code>SUPEQ</code>: Pops the integer values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a &gt;= b</code> to the stack as a boolean integer.</li>
+</ul>
+<h4 id="float-operations">Float Operations</h4>
+<ul>
+<li><code>FADD</code>: Pops the real number values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a + b</code> to the stack.</li>
+<li><code>FSUB</code>: Pops the real number values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a - b</code> to the stack.</li>
+<li><code>FMUL</code>: Pops the real number values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a * b</code> to the stack.</li>
+<li><code>FDIV</code>: Pops the real number values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a / b</code> to the stack.</li>
+<li><code>FINF</code>: Pops the real number values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a &lt; b</code> to the stack as a boolean integer.</li>
+<li><code>FSIN</code>: Pops the real number value <code>a</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>sin(a)</code> to the stack.</li>
+<li><code>FCOS</code>: Pops the real number value <code>a</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>cos(a)</code> to the stack.</li>
+<li><code>FINFEQ</code>: Pops the real number values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a &lt;= b</code> to the stack as a boolean integer.</li>
+<li><code>FSUP</code>: Pops the real number values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a &gt; b</code> to the stack as a boolean integer.</li>
+<li><code>FSUPEQ</code>: Pops the real number values <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the the value <code>a &gt;= b</code> to the stack as a boolean integer.</li>
+</ul>
+<h4 id="address-operations">Address Operations</h4>
+<ul>
+<li><code>PADD</code>: Pops an integer value <code>o</code> and an address <code>a</code> from the top of the <code>Operand Stack</code> and pushes the address <code>a + o</code> to the stack.</li>
+</ul>
+<h4 id="string-operations">String Operations</h4>
+<ul>
+<li><code>CONCAT</code>: Pops the string addresses <code>a</code> and <code>b</code> from the top of the <code>Operand Stack</code> and pushes the value concatenated strings to the string heap, and it's corresponding address to the stack.</li>
+<li><code>CHRCODE</code>: Pops the string address <code>a</code> from the top of the <code>Operand Stack</code> and pushes the UTF-16 code unit of the first character to the stack.</li>
+<li><code>STRLEN</code>: Pops the string address <code>a</code> from the top of the <code>Operand Stack</code> and pushes tit's length to the stack.</li>
+<li><code>CHARAT</code>: Pops an integer value <code>i</code> and the string address <code>a</code> from the top of the <code>Operand Stack</code> and pushes the UTF-16 code unit of the character at the index <code>i</code> of the string to the stack.</li>
+</ul>
+<h4 id="binary-operations">Binary Operations</h4>
+<ul>
+<li><code>CHECK lb ub</code>: Checks if the integer value at the top of the <code>Operand Stack</code> is within the interval <code>[lb, ub]</code>. If it succeeds, no output is returned. If it fails, an error is thrown.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>lb</code>: An immediate integer value.</li>
+<li><code>ub</code>: An immediate integer value.</li>
+</ul>
+</li>
+<li><em><strong>SEE: <code>JZ</code></strong></em></li>
+</ul>
+</li>
+<li><code>AND</code>: Pops a numeric value <code>a</code> and a numeric value <code>b</code> from the <code>Operand Stack</code> and pushes the result of <code>a &amp;&amp; b</code>. For both operands, any value different than 0 is treated as <code>true</code> and 0 is treated as <code>false</code>.
+<ul>
+<li><em><strong>SEE: <code>JZ</code></strong></em></li>
+</ul>
+</li>
+<li><code>OR</code>: Pops a numeric value <code>a</code> and a numeric value <code>b</code> from the <code>Operand Stack</code> and pushes the result of <code>a || b</code>. For both operands, any value different than 0 is treated as <code>true</code> and 0 is treated as <code>false</code>.
+<ul>
+<li><em><strong>SEE: <code>JZ</code></strong></em></li>
+</ul>
+</li>
+<li><code>EQUAL</code>: Pops a value <code>a</code> and a value <code>b</code> from the <code>Operand Stack</code> and pushes the result of <code>a == b</code>.</li>
+</ul>
+<h4 id="conversion-operations">Conversion Operations</h4>
+<ul>
+<li><code>ATOI</code>: Pops a string address from the <code>Operand Stack</code>, converts it's correspondent value on the <code>String Heap</code> to an integer, and pushes the result to the stack. If the string is not a valid integer, an error is thrown.</li>
+<li><code>ATOF</code>: Pops a string address from the <code>Operand Stack</code>, converts it's correspondent value on the <code>String Heap</code> to a real number, and pushes the result to the stack. If the string is not a valid real number, an error is thrown.</li>
+<li><code>ITOF</code>: Pops an integer value from the <code>Operand Stack</code>, converts it to a real number value and pushes the result to the stack.</li>
+<li><code>FTOI</code>: Pops a real number value from the <code>Operand Stack</code>, converts it to a integer value and pushes the result to the stack.</li>
+<li><code>STRI</code>: Pops an integer value from the <code>Operand Stack</code>, converts it to a string value, pushes the result to the <code>String Heap</code> and pushes the corresponding address to the stack.</li>
+<li><code>STRF</code>: Pops a real number value from the <code>Operand Stack</code>, converts it to a string value, pushes the result to the <code>String Heap</code> and pushes the corresponding address to the stack.</li>
+</ul>
+<h3 id="data-manipulation">Data Manipulation</h3>
+<p>Data manipulation operations are operations whose primary purpose is manipulating the <code>Operand Stack</code> and/or the heaps. They can add, remove and manipulate the values. As a rule of thumb, <code>PUSH</code> operations are <em><strong>read</strong></em> operations and <code>STORE</code> operations are <em><strong>write</strong></em> operations.</p>
+<h4 id="adding-to-the-operand-stack">Adding to the <code>Operand Stack</code></h4>
+<ul>
+<li><code>PUSHI i</code>: Pushes an integer <code>i</code> to the top of the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>i</code>: An immediate integer value.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>PUSHN n</code>: Pushes the NIL (0) immediate integer value <code>n</code> times.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>n</code>: An immediate integer value.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>PUSHF r</code>: Pushes a real number <code>r</code> to the top of the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>r</code>: An immediate real number value.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>PUSHS s</code>: Pushes a string <code>s</code> to the <code>String Heap</code> and pushes the resulting address to the top of the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>s</code>: An immediate string value.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>PUSHG i</code>: Pushes an integer found at the offset <code>i</code> from the <code>GP</code> to the top of the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>i</code>: An immediate integer value.</li>
+</ul>
+</li>
+<li><strong>Example:</strong>
+<ul>
+<li>Initial state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">[10, 20, 30, 40]</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">0</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Command: <code>pushg 2</code></li>
+<li>End state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">[10, 20, 30, 40, 30]</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">0</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>PUSHL i</code>: Pushes an integer found at the offset <code>i</code> from the <code>FP</code> to the top of the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>i</code>: An immediate integer value.</li>
+</ul>
+</li>
+<li><strong>Example:</strong>
+<ul>
+<li>Initial state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, 40</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">2</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Command: <code>pushl 0</code></li>
+<li>End state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, 40, 30</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">2</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>PUSHSP</code>: Pushes the current value of the <code>SP</code> to the top of the <code>Operand Stack</code> as an address.
+<ul>
+<li><em><strong>SEE: <code>LOAD</code></strong></em>.</li>
+</ul>
+</li>
+<li><code>PUSHFP</code>: Pushes the current value of the <code>FP</code> to the top of the <code>Operand Stack</code> as an address.
+<ul>
+<li><em><strong>SEE: <code>LOAD</code></strong></em>.</li>
+</ul>
+</li>
+<li><code>PUSHGP</code>: Pushes the current value of the <code>GP</code> to the top of the <code>Operand Stack</code> as an address.
+<ul>
+<li><em><strong>SEE: <code>LOAD</code></strong></em>.</li>
+</ul>
+</li>
+<li><code>PUSHST i</code>: Pushes the address of a struct on the <code>Struct Heap</code> at a given index <code>i</code> to the top of the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>i</code>: An immediate integer value.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>LOAD o</code>: Pops an address (<code>a</code>) from the top of the <code>Operand Stack</code> and pushes to the top of the <code>Operand Stack</code> the value found at <code>a + o</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>o</code>: An immediate integer value.</li>
+</ul>
+</li>
+<li><strong>Example:</strong>
+<ul>
+<li>Initial state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, stack#0</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">2</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Command: <code>load 1</code></li>
+<li>End state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, 20</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">2</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>LOADN</code>: Pops an integer offset (<code>o</code>) and an address (<code>a</code>) from the top of the <code>Operand Stack</code> and pushes to the top of the <code>Operand Stack</code> the value found at <code>a + o</code>.
+<ul>
+<li>Functionally identical to <em><strong><code>LOAD</code></strong></em>, but takes the arguments from the <code>Operand Stack</code>.</li>
+<li><strong>Example:</strong>
+<ul>
+<li>Initial state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, stack#0, 2</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">2</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Command: <code>loadn</code></li>
+<li>End state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, 30</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">2</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>DUP n</code>: Duplicates the value found at the top of the <code>Operand Stack</code> <code>n</code> times, pushing them all to the top of the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>n</code>: An immediate integer value.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>DUPN</code>: Pops an integer value (<code>n</code>) from the <code>Operand Stack</code> and duplicates the value found at the top of the <code>Operand Stack</code> <code>n</code> times, pushing them all to the top of the <code>Operand Stack</code>.
+<ul>
+<li>Functionally identical to <em><strong><code>DUP</code></strong></em>, but takes the argument from the <code>Operand Stack</code>.</li>
+</ul>
+</li>
+</ul>
+<h4 id="taking-from-operand-stack">Taking from <code>Operand Stack</code></h4>
+<ul>
+<li><code>POP n</code>: Removes the first <code>n</code> values from the top of the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>n</code>: An immediate integer value.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>POPN</code>: Pops an integer value (<code>n</code>) from the <code>Operand Stack</code> and removes the first <code>n</code> values from the top of the <code>Operand Stack</code>.
+<ul>
+<li>Functionally identical to <em><strong><code>POP</code></strong></em>, but takes the argument from the <code>Operand Stack</code>.</li>
+</ul>
+</li>
+</ul>
+<h4 id="manipulating-the-operand-stack">Manipulating the <code>Operand Stack</code></h4>
+<ul>
+<li><code>STOREL i</code>: Pops the a value from the top of the <code>Operand Stack</code> and stores it at <code>FP + i</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>i</code>: An immediate integer value.</li>
+</ul>
+</li>
+<li><strong>Example:</strong>
+<ul>
+<li>Initial state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, 40</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Command: <code>storel 1</code></li>
+<li>End state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 40</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>STOREG i</code>: Pops the a value from the top of the <code>Operand Stack</code> and stores it at <code>GP + i</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>i</code>: An immediate integer value.</li>
+</ul>
+</li>
+<li><strong>Example:</strong>
+<ul>
+<li>Initial state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, 40</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Command: <code>storeg 1</code></li>
+<li>End state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 40, 30</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>STORE i</code>: Pops a value <code>v</code> and an address <code>a</code> from the top of the <code>Operand Stack</code> and stores the value of <code>v</code> at <code>a + i</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>i</code>: An immediate integer value.</li>
+</ul>
+</li>
+<li><strong>Example:</strong>
+<ul>
+<li>Initial state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, stack#1, 40</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Command: <code>store 1</code></li>
+<li>End state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 40</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>STOREN</code>: Pops a value <code>v</code>, an integer offset and an address <code>a</code> from the top of the <code>Operand Stack</code> and stores the value of <code>v</code> at <code>a + i</code>.
+<ul>
+<li>Functionally identical to <em><strong><code>STORE</code></strong></em>, but takes all arguments from the <code>Operand Stack</code>.</li>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>i</code>: An immediate integer value.</li>
+</ul>
+</li>
+<li><strong>Example:</strong>
+<ul>
+<li>Initial state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, stack#1, 1, 40</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Command: <code>storen</code></li>
+<li>End state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 40</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>SWAP</code>: Pops a value <code>a</code> and a value <code>b</code> from the <code>Operand Stack</code> and pushes them back in their reverse order.
+<ul>
+<li><strong>Example:</strong>
+<ul>
+<li>Initial state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 20, 30, 40</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>Command: <code>swap</code></li>
+<li>End state:
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Operand Stack</th>
+<th style="text-align:left">GP</th>
+<th style="text-align:left">FP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">10, 40, 40, 30</td>
+<td style="text-align:left">0</td>
+<td style="text-align:left">1</td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id=""></h1>
+<h4 id="heap-operations">Heap Operations</h4>
+<ul>
+<li><code>ALLOC n</code>: Allocates a memory block with a size of <code>n</code> units in the <code>Struct Heap</code> and pushes it's corresponding address to the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>n</code>: An immediate integer value.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>ALLOCN</code>: Pops an integer value <code>n</code> from the top of the <code>Operand Stack</code> and allocates a memory block with a size of <code>n</code> units in the <code>Struct Heap</code> and pushes it's corresponding address to the <code>Operand Stack</code>.
+<ul>
+<li>Functionally identical to <em><strong><code>ALLOC</code></strong></em>, but takes the argument from the <code>Operand Stack</code>.</li>
+</ul>
+</li>
+<li><code>FREE</code>: Pops a struct address value <code>a</code> from the top of the <code>Operand Stack</code> and frees the allocated block associated with address on the <code>Struct Heap</code>. Attempting to free an already freed block will result in a runtime error being thrown.</li>
+<li><code>POPST</code>: Pops the struct at the top of the <code>Struct Heap</code>. It's value is discared and all pointers to it will become invalid, but not cleaned up.</li>
+</ul>
+<h3 id="input-output-operations">Input-Output Operations</h3>
+<p>Input-Output operations (abbreviated as IO Operations) are operations that read user input or write data to the output buffer.</p>
+<ul>
+<li><code>WRITEI</code>: Pops an integer from the top of the <code>Operand Stack</code> and prints it.</li>
+<li><code>WRITEF</code>: Pops a real number from the top of the <code>Operand Stack</code> and prints it.</li>
+<li><code>WRITES</code>: Pops a string address from the top of the <code>Operand Stack</code> and prints it's associated value on the <code>String heap</code>.</li>
+<li><code>WRITELN</code>: Prints a new line.</li>
+<li><code>WRITECHR</code>: Pops an integer from the top of the <code>Operand Stack</code> and prints it's corresponding UTF-16 character.</li>
+<li><code>READ</code>: Reads a string from the keyboard, stores it in the <code>String heap</code> and pushes it's address to the top of the <code>Operand Stack</code>.</li>
+</ul>
+<h1 id="-1"></h1>
+<h3 id="control-operations">Control Operations</h3>
+<p>Control operations are operations that alter the control flow of the program. Can be used to create conditionals, loops and procedures.</p>
+<h4 id="program-counter-register-alteration">Program Counter Register Alteration</h4>
+<ul>
+<li><code>PUSHA label</code>: Pushes the address corresponding to the <code>label</code> to the top of the <code>Operand Stack</code>.
+<ul>
+<li><em><strong>SEE: <code>CALL</code></strong></em></li>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>label</code>: An existing label. If the label does not exist, a grammar error is thrown.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>JUMP label</code>: Sets the program counter to the address of the instruction immediately after the <code>label</code>. Does not alter the <code>Operand Stack</code>.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>label</code>: An existing label. If the label does not exist, a grammar error is thrown.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>JZ label</code>: Pops a value (<code>v</code>) from the top of the <code>Operand Stack</code>. If <code>v == 0</code>, sets the program counter to the address of the instruction immediately after the <code>label</code>. Otherwise, the current flow is followed with no additional changes.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>label</code>: An existing label. If the label does not exist, a grammar error is thrown.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="procedures">Procedures</h4>
+<ul>
+<li><code>CALL</code>: Pops a code address (<code>a</code>) from the top of the <code>Operand Stack</code>, pushes the current program counter and <code>frame pointer</code> to the <code>Call Stack</code> and finally sets the program counter to <code>a</code> and the <code>frame pointer</code> to the current <code>stack pointer</code>.
+<ul>
+<li><em><strong>SEE: <code>PUSHA</code></strong></em></li>
+</ul>
+</li>
+<li><code>RETURN</code>: Pops the parent flow's program counter and <code>frame pointer</code>, restores them and continues the parent flow. Leftover values in the <code>Operand Stack</code> are <em><strong>NOT</strong></em> cleaned up.</li>
+</ul>
+<h4 id="lifecycle-operations">Lifecycle Operations</h4>
+<ul>
+<li><code>START</code>: Sets the <code>frame pointer</code> to the current <code>stack pointer</code>.</li>
+<li><code>NOP</code>: No OPeration. Has no effect.</li>
+<li><code>ERR msg</code>: Throws an error with the message <code>msg</code> and immediately halts the program execution.
+<ul>
+<li><strong>Arguments:</strong>
+<ul>
+<li><code>msg</code>: An immediate string value.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>STOP</code>: Halts the program execution immediately.</li>
+</ul>
+<h1 id="-2"></h1>
+<h2 id="editor">Editor</h2>
+<p>The VM can be accessed through a web page editor that provides step-by-step execution of the program, as well as error reporting. The page itself is divided into several components:
+<img src="file:////home/rafaelsf/Desktop/Cadeiras/3ano/2sem/PL/Projeto/ewvm_editor_layout.png" alt="Editor Layout"></p>
+<ol>
+<li>The <code>Code Editor</code>, located on the left side of the page, can be used to hold the program code for execution. It also indicates the currently executed line, as well as the line where a given error was reported, or a given output was printed to the output buffer.</li>
+<li>The <code>Output Buffer</code>, located on the bottom right side of the page, will hold any errors that may arise from the interpretation of the code present on the editor, as well as all the output that the program produces. Clicking on any character on the buffer will indicate on the code editor the line that originated the output at that position. That behavior is also present for most errors, safe for errors that happen at an early stage of the interpretation process.</li>
+<li>The <code>Input Buffer</code>, located below the <code>Output Buffer</code>, and hidden by default, is revealed every time the execution encounters a <em><strong><code>READ</code></strong></em> instruction, which will halt execution until the user inserts an input line into the input buffer. The input will only be accepted upon hitting the <code>Enter</code> key on the keyboard.</li>
+</ol>
+<p>The <code>Control Panel</code>, located above the <code>Output Buffer</code>, is the section of the page where the controls and state visualization for the current program are located. It, in turn, is split into multiple components itself:</p>
+<ol start="4">
+<li>The <code>Call Stack</code>, located on the left side, contains the state required for backtracking prodecure calls throughout the program's lifetime. Every line is divided in half, and holds the previous <code>Program Counter</code> on the left-hand side, and the previous <code>Frame Counter</code> on the right-hand side.</li>
+<li>The <code>Operand Stack</code>, located immediately to the right of the <code>Call Stack</code>, contains the main state of the program, holding every value and address used by most instructions. Numeric values are shown as-is (e.g. <code>10</code>, <code>3.1415</code>), while addresses are shown in the form <code>&lt;source&gt;#&lt;position&gt;</code>, where the source is:
+<ul>
+<li><code>code</code>: When the address points to a position of a label on the program (<em><strong>SEE: <code>PUSHA</code></strong></em>).</li>
+<li><code>stack</code>: When the address points to a position on the <code>Operand Stack</code> (<em><strong>SEE: <code>PUSHSP</code>, <code>PUSHFP</code>, <code>PUSHGP</code></strong></em>).</li>
+<li><code>string</code>: When the address points to a position on the <code>String Heap</code> (<em><strong>SEE: <code>PUSHS</code></strong></em>).</li>
+<li><code>struct</code>: When the address points to a position on the <code>Struct Heap</code> (<em><strong>SEE: <code>PUSHST</code></strong></em>).</li>
+</ul>
+</li>
+<li>The <code>String Heap</code>, located immediately to the right of the <code>Operand Stack</code> and aligned to the top of the section, contains the string values that are used throughout the lifetime of the program. The values are represented as-is (e.g. <code>Lorem ipsum dolor sit amet.</code>).</li>
+<li>The <code>Struct Heap</code>, located immediately to the right of the <code>Operand Stack</code> and aligned to the bottom of the section, contains the memory blocks that are alocated at a given time during the program's lifetime. The values are represented as contiguous cells, each holding a numeric or string address.</li>
+<li>The <code>Program Controls</code>, located immediately below all other componments of the <code>Control Panel</code>, holds four buttons distributed equally around the current <code>Program Counter</code> display. To their right side are the displays for the current <code>Global Pointer</code>, <code>Frame Pointer</code> and <code>Stack Pointer</code>. The <code>FP</code> will start off with the value <code>-</code>, which is to be interpreted as nil (0), while the <code>SP</code> will start off with the value <code>0</code>. The <code>GP</code> should always be <code>0</code>. The control buttons step the <code>PC</code> forwards or backwards:
+<ul>
+<li><code>&lt;&lt;</code>: Resets the <code>PC</code> back to 0.</li>
+<li><code>&lt;</code>: Decrements the <code>PC</code> by one unit, except when backtracking from a procedure call, on which case, it will be set to the <code>PC</code> stored at the bottom entry on the <code>Call Stack</code>.</li>
+<li><code>&gt;</code>: Increments the <code>PC</code> by one unit, except when executing a <code>JUMP</code> instruction or a procedure call, on which case it will be set to the target <code>PC</code> as determined by each instruction (<em><strong>SEE: <code>JUMP</code>, <code>JZ</code>, <code>CALL</code></strong></em>).</li>
+<li><code>&gt;&gt;</code>: Sets the <code>PC</code> to the end of the program.</li>
+</ul>
+</li>
+</ol>
+
+            
+            
+        </body>
+        </html>
